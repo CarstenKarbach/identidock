@@ -3,6 +3,7 @@ import requests
 import os
 import hashlib
 import redis
+import html
 
 app = Flask(__name__)
 salt = "UNIQUE_SALT"
@@ -18,21 +19,24 @@ def mainpage():
     callcount += 1
     
     if request.method == 'POST':
-        name = request.form['name']
+        name = html.escape(request.form['name'], quote=True)
     
     salted_name = salt+name
     name_hash = hashlib.sha256(salted_name.encode()).hexdigest()
     
     dirname = os.path.dirname(__file__)
-    html = open(dirname+'/resources/identicon.html').read()
-    html = html.replace('@@name@@', name)
-    html = html.replace('@@name_hash@@', name_hash)
-    html = html.replace('@@callcount@@', str(callcount))
-    return html
+    fh = open(dirname+'/resources/identicon.html')
+    result = fh.read()
+    fh.close()
+    result = result.replace('@@name@@', name)
+    result = result.replace('@@name_hash@@', name_hash)
+    result = result.replace('@@callcount@@', str(callcount))
+    return result
 
 @app.route('/monster/<name>')
 def get_identicon(name):
     
+    name = html.escape(name, quote=True)
     image = cache.get(name)
     
     if image is None:
