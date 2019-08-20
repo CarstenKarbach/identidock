@@ -1,0 +1,18 @@
+identidock:
+ build: .
+ ports:
+  - "9090:9090"
+ environment:
+  ENV: PROD
+ volumes:
+  - ./app:/app
+ links:
+  - dnmonster
+  - idredis
+  
+dnmonster:
+ image: amouat/dnmonster:1.0
+ 
+idredis:
+ image: redis:3.0
+ 
