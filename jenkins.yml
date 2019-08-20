@@ -4,8 +4,6 @@ identidock:
   - "9090:9090"
  environment:
   ENV: PROD
- volumes:
-  - ./app:/app
  links:
   - dnmonster
   - idredis
